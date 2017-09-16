@@ -1,7 +1,6 @@
 import pickle
 import logging
 from models.base import BaseModel
-from util.stat import ddd, dd
 
 
 class StatModel(BaseModel):

@@ -1,7 +1,7 @@
 import logging
 from models.statModel import StatModel
 from util.corpus import Corpus
-from util.stat import ddd, dd
+from util.stat import ddd, dd   # For loading pickle file
 
 logging.basicConfig(
     level=logging.INFO,
