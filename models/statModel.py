@@ -33,8 +33,15 @@ class StatModel(BaseModel):
                 sentAfter.append((sentID, tokenID, token))
                 self.notFoundToken += 1
             elif getToken and not getLabel:
-                sentAfter.append((sentID, tokenID, token))
+                mostFreqFD = max(getToken.values(), key=lambda fd: sum(fd.values()))
+                after = max(mostFreqFD.items(), key=lambda tf: tf[1])[0]
+
+                if after in self.unchangedList:
+                    sentAfter.append((sentID, tokenID, token))
+                else:
+                    sentAfter.append((sentID, tokenID, after))
                 self.notFoundLabel += 1
+                
             else:
                 after = max(getLabel.items(), key=lambda tf: tf[1])[0]
                 if after in self.unchangedList:
