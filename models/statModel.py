@@ -36,7 +36,7 @@ class StatModel(BaseModel):
                 sentAfter.append((sentID, tokenID, token))
                 self.notFoundLabel += 1
             else:
-                after = max(fd.items(), key=lambda tf: tf[1])[0]
+                after = max(getLabel.items(), key=lambda tf: tf[1])[0]
                 if after in self.unchangedList:
                     sentAfter.append((sentID, tokenID, token))
                 else:
