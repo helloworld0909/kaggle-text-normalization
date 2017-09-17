@@ -20,7 +20,7 @@ def ambiguousTrans(freqDict, threshold=0.1):
                 top2Trans = allTrans[-2:]
                 if top2Trans[0][1] / top2Trans[1][1] > threshold:
                     ambiguousTransDict[token][label] = labelFD
-                    logging.info('\t'.join([token, label, str(top2Trans)]))
+                    logging.info('\t'.join([token, label, str(allTrans)]))
 
     with open('ambigousTrans.pkl', 'wb') as pklFile:
         pickle.dump(ambiguousTransDict, pklFile, -1)
