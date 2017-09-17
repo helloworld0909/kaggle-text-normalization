@@ -1,6 +1,7 @@
 import pickle
 import logging
 from models.base import BaseModel
+from models.rules import Rules
 
 
 class StatModel(BaseModel):
@@ -9,6 +10,7 @@ class StatModel(BaseModel):
         super(StatModel, self).__init__()
         self.freqDict = self.loadPklFreqDict(pklFreqDict)
         self.unchangedList = ['<self>', 'sil']
+        self.notFoundNum = 0
 
     @staticmethod
     def loadPklFreqDict(pklFreqDict):
@@ -26,6 +28,7 @@ class StatModel(BaseModel):
             fd = self.freqDict.get(token, {}).get(label, {})
             if not fd:
                 sentAfter.append((sentID, tokenID, token))
+                self.notFoundNum += 1
             else:
                 after = max(fd.items(), key=lambda tf: tf[1])[0]
                 if after in self.unchangedList:

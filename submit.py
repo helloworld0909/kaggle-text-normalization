@@ -12,5 +12,6 @@ logging.basicConfig(
 X = Corpus.loadEnrichData('data/en_test_enrich.txt')
 model = StatModel('data/freqDict.pkl')
 prediction = model.predict(X)
+logging.info('Not found rate: {}'.format(model.notFoundNum / 1088565.0))
 Corpus.writePrediction(prediction, 'submission.csv')
 
