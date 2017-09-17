@@ -10,7 +10,8 @@ class StatModel(BaseModel):
         super(StatModel, self).__init__()
         self.freqDict = self.loadPklFreqDict(pklFreqDict)
         self.unchangedList = ['<self>', 'sil']
-        self.notFoundNum = 0
+        self.notFoundToken = 0
+        self.notFoundLabel = 0
 
     @staticmethod
     def loadPklFreqDict(pklFreqDict):
@@ -25,10 +26,15 @@ class StatModel(BaseModel):
         sentAfter = []
         for row in sent:
             sentID, tokenID, label, token = row[:4]
-            fd = self.freqDict.get(token, {}).get(label, {})
-            if not fd:
+            getToken = self.freqDict.get(token, {})
+            getLabel = getToken.get(label, {})
+
+            if not getToken:
                 sentAfter.append((sentID, tokenID, token))
-                self.notFoundNum += 1
+                self.notFoundToken += 1
+            elif getToken and not getLabel:
+                sentAfter.append((sentID, tokenID, token))
+                self.notFoundLabel += 1
             else:
                 after = max(fd.items(), key=lambda tf: tf[1])[0]
                 if after in self.unchangedList:
