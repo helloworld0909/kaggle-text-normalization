@@ -30,6 +30,36 @@ def ambiguousTrans(freqDict, threshold=1000):
     logging.info('AmbiguousTrans finish')
 
 
+def ambiguousLabel(freqDict, threshold=1000):
+    ambiguousLabelDict = defaultdict(ddd)
+
+    totalDiffCount = 0
+    for token, tokenFD in freqDict.items():
+        if len(tokenFD) >= 2:
+
+            allLabel = sorted(tokenFD.items(), key=lambda lf: sum(lf[1].values()), reverse=True)
+
+            topLabel = allLabel[0][0]
+            topLabelFD = tokenFD[topLabel]
+            topLabelAfter = max(topLabelFD.items(), key=lambda lf: lf[1])[0]
+
+            diffCount = 0
+            for label, _ in allLabel[1:]:
+                labelFD = tokenFD[label]
+                for after, freq in labelFD.items():
+                    if after != topLabelAfter:
+                        diffCount += freq
+
+            if diffCount >= threshold:
+                ambiguousLabelDict[token] = tokenFD
+                logging.info('\t'.join([token, str(dict(tokenFD))]))
+                totalDiffCount += diffCount
+
+    with open('data/ambigousLabel.pkl', 'wb') as pklFile:
+        pickle.dump(ambiguousLabelDict, pklFile, -1)
+    logging.info('Total diff count: {}'.format(totalDiffCount))
+    logging.info('ambigousLabel finish')
+
 if __name__ == '__main__':
 
     logging.basicConfig(
@@ -39,7 +69,7 @@ if __name__ == '__main__':
     )
 
     fd = loadPklFreqDict('data/freqDict.pkl')
-    ambiguousTrans(fd, threshold=1000)
-
+    # ambiguousTrans(fd, threshold=1000)
+    ambiguousLabel(fd, threshold=1000)
 
 
