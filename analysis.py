@@ -1,6 +1,7 @@
 import logging
 import pickle
 from collections import defaultdict
+import numpy as np
 from util.stat import ddd, dd   # For loading pickle file
 
 
@@ -11,14 +12,18 @@ def loadPklFreqDict(pklFreqDict):
         return fd
 
 
-def ambiguousTrans(freqDict, threshold=0.1):
+def ambiguousTrans(freqDict, threshold=0.3):
     ambiguousTransDict = defaultdict(ddd)
     for token, tokenFD in freqDict.items():
         for label, labelFD in tokenFD.items():
             if len(labelFD) >= 2:
-                allTrans = sorted(labelFD.items(), key=lambda tf: tf[1])
-                top2Trans = allTrans[-2:]
-                if top2Trans[0][1] / top2Trans[1][1] > threshold:
+                allTrans = sorted(labelFD.items(), key=lambda tf: tf[1], reverse=True)
+
+                nTrans = np.array(list(map(lambda tf: tf[1], allTrans)))
+                pTrans = nTrans / nTrans.sum()
+                entropy = -np.sum(pTrans * np.log(pTrans))
+
+                if entropy > threshold:
                     ambiguousTransDict[token][label] = labelFD
                     logging.info('\t'.join([token, label, str(allTrans)]))
 
