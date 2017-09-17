@@ -12,7 +12,7 @@ def loadPklFreqDict(pklFreqDict):
         return fd
 
 
-def ambiguousTrans(freqDict, threshold=0.3):
+def ambiguousTrans(freqDict, threshold=1000):
     ambiguousTransDict = defaultdict(ddd)
     for token, tokenFD in freqDict.items():
         for label, labelFD in tokenFD.items():
@@ -20,14 +20,12 @@ def ambiguousTrans(freqDict, threshold=0.3):
                 allTrans = sorted(labelFD.items(), key=lambda tf: tf[1], reverse=True)
 
                 nTrans = np.array(list(map(lambda tf: tf[1], allTrans)))
-                pTrans = nTrans / nTrans.sum()
-                entropy = -np.sum(pTrans * np.log(pTrans))
 
-                if entropy > threshold:
+                if nTrans[1:].sum() >= threshold:
                     ambiguousTransDict[token][label] = labelFD
                     logging.info('\t'.join([token, label, str(allTrans)]))
 
-    with open('ambigousTrans.pkl', 'wb') as pklFile:
+    with open('data/ambigousTrans.pkl', 'wb') as pklFile:
         pickle.dump(ambiguousTransDict, pklFile, -1)
     logging.info('AmbiguousTrans finish')
 
@@ -41,7 +39,7 @@ if __name__ == '__main__':
     )
 
     fd = loadPklFreqDict('data/freqDict.pkl')
-    ambiguousTrans(fd, threshold=0.1)
+    ambiguousTrans(fd, threshold=1000)
 
 
 
