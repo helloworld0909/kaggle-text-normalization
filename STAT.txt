@@ -1,0 +1,2 @@
+Not found token rate:	7.35e-6
+Found token but not found label	7.12e-4
