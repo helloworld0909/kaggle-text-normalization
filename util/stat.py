@@ -28,6 +28,16 @@ def generateFreqDict(filenameList):
         pickle.dump(freqDict, pklFile, -1)
     logging.info('VocabSize: {}'.format(len(freqDict)))
 
+def generateCoNLL(filename, outputName):
+    with open(filename, 'r', encoding='utf-8') as inputFile:
+        with open(outputName, 'w', encoding='utf-8') as outputFile:
+            for line in inputFile:
+                if line.startswith('<eos>') or not line.strip():
+                    outputFile.write('\n')
+                    continue
+                label, token, after = line.strip('\n').split('\t')
+                outputFile.write(token + '\t' + label + '\n')
+
 
 if __name__ == '__main__':
 
@@ -37,4 +47,5 @@ if __name__ == '__main__':
         datefmt='%a, %d %b %Y %H:%M:%S',
     )
 
-    generateFreqDict(nameList)
+    # generateFreqDict(nameList)
+    generateCoNLL('../en_with_types/output-00001-of-00100', 'en_train_CoNLL1.txt')
