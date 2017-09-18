@@ -64,7 +64,7 @@ def fixFreqDict(filename):
                     after = after.replace('s l a s h', 'slash')
                     after = after.replace('c o l o n', 'colon')
                     after = after.replace('d a s h', 'dash')
-                    after = after.replace('h a s h', 'hash')
+                    after = after.replace(' h a s h ', ' hash ')
                     labelFD[after] = freq
     with open('freqDict.pkl', 'wb') as pklFile:
         pickle.dump(freqDict, pklFile, -1)

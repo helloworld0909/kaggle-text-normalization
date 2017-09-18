@@ -24,4 +24,4 @@ def votingEnrich(filenameList):
 
 
 if __name__ == '__main__':
-    votingEnrich(['data/enrich_0.99870.txt', 'data/enrich_0.99890.txt', 'data/enrich_0.99890.txt'])
+    votingEnrich(['data/enrich_0.99870.txt', 'data/enrich_0.99890.txt', 'data/enrich_0.99886.txt'])
