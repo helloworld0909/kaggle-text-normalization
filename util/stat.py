@@ -1,9 +1,9 @@
 import logging
 import pickle
+import re
 from collections import defaultdict
 
 
-nameList = ['output-000{:0>2}-of-00100'.format(i) for i in range(1)]
 
 
 def dd():
@@ -12,9 +12,26 @@ def dd():
 def ddd():
     return defaultdict(dd)
 
+class TranslateRule(object):
+
+    def __init__(self):
+        self.alphabet = 'abcdefghijklmnopqrstuvwxyz'
+        self.trigger = re.compile('_letter')
+        self.translate = {'{}_letter'.format(c): c for c in self.alphabet}
+        self.translate['_letter'] = ''
+        self.whitespaces = re.compile(' +')
+
+    def apply(self, raw):
+        if re.search(self.trigger, raw):
+            for before, after in self.translate.items():
+                raw = raw.replace(before, after)
+            raw = self.whitespaces.sub(' ', raw)
+        return raw
+
 def generateFreqDict(filenameList):
 
     freqDict = defaultdict(ddd)
+    translateRule = TranslateRule()
     for filename in filenameList:
         with open(filename, 'r', encoding='utf-8') as inputFile:
             for line in inputFile:
@@ -22,6 +39,9 @@ def generateFreqDict(filenameList):
                     continue
                 line = line.strip('\n').split('\t')
                 label, token, after = line
+
+                after = translateRule.apply(after)
+
                 freqDict[token][label][after] += 1
         logging.info('{} finish'.format(filename))
     with open('freqDict.pkl', 'wb') as pklFile:
@@ -47,5 +67,6 @@ if __name__ == '__main__':
         datefmt='%a, %d %b %Y %H:%M:%S',
     )
 
-    # generateFreqDict(nameList)
-    generateCoNLL('../en_with_types/output-00001-of-00100', 'en_train_CoNLL1.txt')
+    nameList = ['../en_with_types/output-000{:0>2}-of-00100'.format(i) for i in range(100)]
+    generateFreqDict(nameList)
+    # generateCoNLL('../en_with_types/output-00001-of-00100', 'en_train_CoNLL1.txt')
