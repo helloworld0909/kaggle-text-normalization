@@ -48,6 +48,29 @@ def generateFreqDict(filenameList):
         pickle.dump(freqDict, pklFile, -1)
     logging.info('VocabSize: {}'.format(len(freqDict)))
 
+def fixFreqDict(filename):
+    with open(filename, 'rb') as pklFile:
+        freqDict = pickle.load(pklFile)
+        logging.info('Load pickle file finish')
+    for tokenFD in freqDict.values():
+        for labelFD in tokenFD.values():
+            for after, freq in labelFD.items():
+                if after.startswith(' '):
+                    labelFD.pop(after)
+                    labelFD[after.strip(' ')] = freq
+                if after.startswith('h t t p'):
+                    labelFD.pop(after)
+                    after = after.replace('dot c o m', 'dot com')
+                    after = after.replace('s l a s h', 'slash')
+                    after = after.replace('c o l o n', 'colon')
+                    after = after.replace('d a s h', 'dash')
+                    after = after.replace('h a s h', 'hash')
+                    labelFD[after] = freq
+    with open('freqDict.pkl', 'wb') as pklFile:
+        pickle.dump(freqDict, pklFile, -1)
+    logging.info('VocabSize: {}'.format(len(freqDict)))
+
+
 def generateCoNLL(filename, outputName):
     with open(filename, 'r', encoding='utf-8') as inputFile:
         with open(outputName, 'w', encoding='utf-8') as outputFile:
@@ -67,6 +90,7 @@ if __name__ == '__main__':
         datefmt='%a, %d %b %Y %H:%M:%S',
     )
 
-    nameList = ['../en_with_types/output-000{:0>2}-of-00100'.format(i) for i in range(100)]
-    generateFreqDict(nameList)
+    # nameList = ['../en_with_types/output-000{:0>2}-of-00100'.format(i) for i in range(100)]
+    # generateFreqDict(nameList)
     # generateCoNLL('../en_with_types/output-00001-of-00100', 'en_train_CoNLL1.txt')
+    fixFreqDict('data/freqDict_unfixed.pkl')
