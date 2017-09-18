@@ -20,7 +20,7 @@ class Corpus(object):
                 row[1] = int(row[1])
                 sentences[row[0]].append(row)
             sentences = sorted(sentences.values(), key=lambda kv: kv[0][0])
-        print('Sentences: {}'.format(len(sentences)))
+        logging.info('Sentences: {}'.format(len(sentences)))
 
         return sentences
 
@@ -38,7 +38,7 @@ class Corpus(object):
                 sentences[row[0]].append(row)
 
             sentences = sorted(sentences.values(), key=lambda kv: kv[0][0])
-        print('Sentences: {}'.format(len(sentences)))
+        logging.info('Sentences: {}'.format(len(sentences)))
 
         return schema, sentences
 
