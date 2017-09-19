@@ -13,6 +13,7 @@ class StatModel(BaseModel):
         self.unchangedList = ['<self>', 'sil']
         self.notFoundToken = 0
         self.notFoundLabel = 0
+        self.potentialError = 0
 
     @staticmethod
     def loadPklFreqDict(pklFreqDict):
@@ -32,6 +33,10 @@ class StatModel(BaseModel):
                 sentAfter.append((sentID, tokenID, token))
                 self.notFoundToken += 1
             elif getToken and not getLabel:
+                if len(getToken) > 1 or len(list(getToken.values())[0]) > 1:
+                    self.potentialError += 1
+                    logging.debug(token + '\t' + label)
+                    logging.debug(str(dict(getToken)))
 
                 afterFD = defaultdict(int)
                 for labelFD in getToken.values():
