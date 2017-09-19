@@ -1,5 +1,6 @@
 import pickle
 import logging
+from collections import defaultdict
 from models.base import BaseModel
 from models.rules import Rules
 
@@ -20,8 +21,6 @@ class StatModel(BaseModel):
             logging.info('Load pickle file finish')
             return fd
 
-
-
     def predictSentence(self, sent):
         sentAfter = []
         for row in sent:
@@ -33,8 +32,12 @@ class StatModel(BaseModel):
                 sentAfter.append((sentID, tokenID, token))
                 self.notFoundToken += 1
             elif getToken and not getLabel:
-                mostFreqFD = max(getToken.values(), key=lambda fd: sum(fd.values()))
-                after = max(mostFreqFD.items(), key=lambda tf: tf[1])[0]
+
+                afterFD = defaultdict(int)
+                for labelFD in getToken.values():
+                    for after, freq in labelFD.items():
+                        afterFD[after] += freq
+                after = max(afterFD.items(), key=lambda tf: tf[1])[0]
 
                 if after in self.unchangedList:
                     sentAfter.append((sentID, tokenID, token))
