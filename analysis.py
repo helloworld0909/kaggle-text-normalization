@@ -12,21 +12,22 @@ def loadPklFreqDict(pklFreqDict):
         return fd
 
 
-def ambiguousTrans(freqDict, threshold=1000):
+def ambiguousTrans(freqDict):
     ambiguousTransDict = defaultdict(ddd)
+    totalCount = 0
     for token, tokenFD in freqDict.items():
         for label, labelFD in tokenFD.items():
             if len(labelFD) >= 2:
                 allTrans = sorted(labelFD.items(), key=lambda tf: tf[1], reverse=True)
-
                 nTrans = np.array(list(map(lambda tf: tf[1], allTrans)))
+                totalCount += nTrans[1:].sum()
 
-                if nTrans[1:].sum() >= threshold:
-                    ambiguousTransDict[token][label] = labelFD
-                    logging.info('\t'.join([token, label, str(allTrans)]))
+                ambiguousTransDict[token][label] = labelFD
+                logging.debug('\t'.join([token, label, str(allTrans)]))
 
     with open('data/ambigousTrans.pkl', 'wb') as pklFile:
         pickle.dump(ambiguousTransDict, pklFile, -1)
+    logging.info('Potential error rate: {}'.format(totalCount / 1000000000))
     logging.info('AmbiguousTrans finish')
 
 
@@ -69,7 +70,7 @@ if __name__ == '__main__':
     )
 
     fd = loadPklFreqDict('data/freqDict.pkl')
-    # ambiguousTrans(fd, threshold=1000)
-    ambiguousLabel(fd, threshold=1000)
+    ambiguousTrans(fd)
+    # ambiguousLabel(fd, threshold=1000)
 
 
