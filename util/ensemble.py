@@ -1,6 +1,7 @@
 import logging
 from collections import defaultdict
 
+
 def votingEnrich(filenameList):
     inputFileList = []
     for filename in filenameList:
@@ -24,4 +25,10 @@ def votingEnrich(filenameList):
 
 
 if __name__ == '__main__':
-    votingEnrich(['data/enrich_0.99870.txt', 'data/enrich_0.99890.txt', 'data/enrich_0.99886.txt'])
+    votingEnrich([
+        'data/enrich_0.99890.txt',
+        'data/enrich_0.99889.txt',
+        'data/enrich_0.99886.txt',
+        'data/enrich_0.99882.txt',
+        'data/enrich_0.99901.txt'
+    ])

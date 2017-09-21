@@ -1,2 +1,5 @@
-Not found token rate:	7.35e-6
-Found token but not found label	7.12e-4
+Ambiguous transformation potential error rate: 9.8254e-05
+
+0.9987  7.12e-4
+0.9988  6.28e-4
+0.9988  5.87e-4
