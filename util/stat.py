@@ -4,13 +4,13 @@ import re
 from collections import defaultdict
 
 
-
-
 def dd():
     return defaultdict(int)
 
+
 def ddd():
     return defaultdict(dd)
+
 
 class TranslateRule(object):
 
@@ -21,12 +21,23 @@ class TranslateRule(object):
         self.translate['_letter'] = ''
         self.whitespaces = re.compile(' +')
 
-    def apply(self, raw):
+    def apply(self, raw, label):
         if re.search(self.trigger, raw):
             for before, after in self.translate.items():
                 raw = raw.replace(before, after)
             raw = self.whitespaces.sub(' ', raw)
+
+        raw = raw.strip(' ')
+
+        if label == 'ELECTRONIC"':
+            raw = raw.replace('dot c o m', 'dot com')
+            raw = raw.replace('s l a s h', 'slash')
+            raw = raw.replace('c o l o n', 'colon')
+            raw = raw.replace('d a s h', 'dash')
+            raw = raw.replace(' h a s h ', ' hash ')
+
         return raw
+
 
 def generateFreqDict(filenameList):
 
@@ -40,13 +51,37 @@ def generateFreqDict(filenameList):
                 line = line.strip('\n').split('\t')
                 label, token, after = line
 
-                after = translateRule.apply(after)
+                after = translateRule.apply(after, label)
 
                 freqDict[token][label][after] += 1
         logging.info('{} finish'.format(filename))
     with open('freqDict.pkl', 'wb') as pklFile:
         pickle.dump(freqDict, pklFile, -1)
     logging.info('VocabSize: {}'.format(len(freqDict)))
+
+
+def generateBigramFreqDict(filenameList):
+    bigramFreqDict = defaultdict(ddd)
+    translateRule = TranslateRule()
+    for filename in filenameList:
+        with open(filename, 'r', encoding='utf-8') as inputFile:
+            previousLabel = '</s>'
+            for line in inputFile:
+                if line.startswith('<eos>') or not line.strip():
+                    previousLabel = '</s>'
+                    continue
+                line = line.strip('\n').split('\t')
+                label, token, after = line
+
+                after = translateRule.apply(after, label)
+
+                bigramFreqDict[token][tuple((previousLabel, label))][after] += 1
+                previousLabel = label
+        logging.info('{} finish'.format(filename))
+    with open('bigramFreqDict.pkl', 'wb') as pklFile:
+        pickle.dump(bigramFreqDict, pklFile, -1)
+    logging.info('VocabSize: {}'.format(len(bigramFreqDict)))
+
 
 def fixFreqDict(filename):
     with open(filename, 'rb') as pklFile:
@@ -90,7 +125,7 @@ if __name__ == '__main__':
         datefmt='%a, %d %b %Y %H:%M:%S',
     )
 
-    # nameList = ['../en_with_types/output-000{:0>2}-of-00100'.format(i) for i in range(100)]
-    # generateFreqDict(nameList)
+    nameList = ['../en_with_types/output-000{:0>2}-of-00100'.format(i) for i in range(100)]
+    # generateBigramFreqDict(nameList)
     # generateCoNLL('../en_with_types/output-00001-of-00100', 'en_train_CoNLL1.txt')
-    fixFreqDict('data/freqDict_unfixed.pkl')
+    fixFreqDict('data/bigramFreqDict.pkl')

@@ -1,5 +1,5 @@
 import logging
-from models.statModel import StatModel
+from models.statModel import StatModel, BigramStatModel
 from util.corpus import Corpus
 from util.stat import ddd, dd   # For loading pickle file
 from util.ensemble import votingEnrich
@@ -18,7 +18,7 @@ votingEnrich([
     'data/enrich_0.99901.txt'
 ])
 X = Corpus.loadEnrichData('data/en_test_enrich.txt')
-model = StatModel('data/freqDict.pkl')
+model = BigramStatModel('data/bigramFreqDict.pkl')
 prediction = model.predict(X)
 logging.info('Not found token rate: {}'.format(model.notFoundToken / 1088565.0))
 logging.info('Found token but not found label rate: {}'.format(model.notFoundLabel / 1088565.0))
