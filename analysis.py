@@ -70,7 +70,7 @@ if __name__ == '__main__':
     )
 
     fd = loadPklFreqDict('data/freqDict.pkl')
-    ambiguousTrans(fd)
+    # ambiguousTrans(fd)
     # ambiguousLabel(fd, threshold=1000)
-
+    print(dict(fd['-']))
 

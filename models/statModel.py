@@ -75,10 +75,7 @@ class BigramStatModel(StatModel):
                 sentAfter.append((sentID, tokenID, token))
                 self.notFoundToken += 1
             elif getToken and not getLabel:
-                if len(getToken) > 1 or len(list(getToken.values())[0]) > 1:
-                    self.potentialError += 1
-                    logging.debug(token + '\t' + label)
-                    logging.debug(str(dict(getToken)))
+
                 afterFD = defaultdict(int)
                 for labelFD in getToken.values():
                     for after, freq in labelFD.items():
@@ -89,6 +86,13 @@ class BigramStatModel(StatModel):
                     sentAfter.append((sentID, tokenID, token))
                 else:
                     sentAfter.append((sentID, tokenID, after))
+
+                if len(getToken) > 1 or len(list(getToken.values())[0]) > 1:
+                    sortedFreq = sorted(afterFD.values(), reverse=True)
+                    self.potentialError += sum(sortedFreq[1:]) / sum(sortedFreq)
+                    logging.debug(token + '\t' + label)
+                    logging.debug(str(dict(getToken)))
+
                 self.notFoundLabel += 1
             else:
                 after = max(getLabel.items(), key=lambda tf: tf[1])[0]

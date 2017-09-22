@@ -13,9 +13,9 @@ logging.basicConfig(
 votingEnrich([
     'data/enrich_0.99890.txt',
     'data/enrich_0.99889.txt',
-    'data/enrich_0.99886.txt',
     'data/enrich_0.99892.txt',
-    'data/enrich_0.99901.txt'
+    'data/enrich_0.99901.txt',
+    'data/enrich_0.99893.txt',
 ])
 X = Corpus.loadEnrichData('data/en_test_enrich.txt')
 model = BigramStatModel('data/bigramFreqDict.pkl')
